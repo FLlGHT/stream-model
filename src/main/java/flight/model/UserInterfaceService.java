@@ -72,7 +72,7 @@ public class UserInterfaceService {
     }
 
     public void displayResults(List<QueuingSystem> systems) {
-        String pattern = "##0.00";
+        String pattern = "##0.000";
         DecimalFormat decimalFormat = new DecimalFormat(pattern);
         System.out.println("Характеристики системы: " + "\n");
         for (QueuingSystem system : systems) {

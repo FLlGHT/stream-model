@@ -131,7 +131,7 @@ public class SystemModelingService {
 
     private void computeRequestsInTheQueueExpectedValue(QueuingSystem system) {
         double requestsInTheQueue = (system.getArrivalRate() * system.getArrivalRate()) /
-                system.getServiceRate() * (system.getServiceRate() - system.getArrivalRate());
+                (system.getServiceRate() * (system.getServiceRate() - system.getArrivalRate()));
         system.setRequestsInTheQueueExpectedValue(requestsInTheQueue);
     }
 
