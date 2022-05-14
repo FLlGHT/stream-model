@@ -73,7 +73,9 @@ public class SystemModelingService {
         computeAnalysisAndDataIncomingIntensity();
         if (stationaryModeExists()) {
             computeQueuingSystems();
-            userInterfaceService.displayResults(systems);
+            if (userInterfaceService.isTableView())
+                userInterfaceService.displayResultsTable(systems);
+            else userInterfaceService.displayResultsList(systems);
         }
     }
 

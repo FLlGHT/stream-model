@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ public class UserInterfaceService {
         System.out.println("Введите количество систем сбора данных: ");
         try {
             return Integer.parseInt(reader.readLine());
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Введите целое число! ");
             return collectionSystems();
         }
@@ -38,7 +39,7 @@ public class UserInterfaceService {
             String[] serviceRateInfo = reader.readLine().split(" ");
             return Arrays.stream(serviceRateInfo)
                     .map(Integer::parseInt).collect(Collectors.toList());
-        } catch (IOException e) {
+        } catch (Exception e) {
             return serviceRateList();
         }
     }
@@ -51,7 +52,7 @@ public class UserInterfaceService {
             return Arrays.stream(probabilitiesInfo.split(" "))
                     .map(Double::parseDouble).collect(Collectors.toList());
         }
-        catch (IOException e) {
+        catch (Exception e) {
             System.out.println("Проверьте корректность введенных данных! ");
             return probabilities();
         }
@@ -62,7 +63,7 @@ public class UserInterfaceService {
         try {
             String intensityInfo = reader.readLine();
             return Integer.parseInt(intensityInfo);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return incomingIntensity();
         }
     }
@@ -71,10 +72,21 @@ public class UserInterfaceService {
         System.out.println("В системе нарушается условие существование станционарного режима");
     }
 
-    public void displayResults(List<QueuingSystem> systems) {
+    public boolean isTableView() {
+        try {
+            System.out.println("Представить резульататы в виде списка или в виде таблицы? ");
+            String answer = reader.readLine();
+            return answer.startsWith("t") || answer.startsWith("т");
+        } catch (IOException e) {
+            isTableView();
+        }
+        return false;
+    }
+
+    public void displayResultsList(List<QueuingSystem> systems) {
         String pattern = "##0.000";
         DecimalFormat decimalFormat = new DecimalFormat(pattern);
-        System.out.println("Характеристики системы: " + "\n");
+        System.out.println("\n\n" + "Характеристики системы: " + "\n");
         for (QueuingSystem system : systems) {
             System.out.println("-----------------------------------------");
             System.out.println(system.getType().getText() + (system.getType().equals(Type.COLLECTION) ? " - " + system.getId() : ""));
@@ -86,6 +98,25 @@ public class UserInterfaceService {
             System.out.println("Мат. ожидание числа требований в очереди " + decimalFormat.format(system.getRequestsInTheQueueExpectedValue()));
             System.out.println("Мат. ожидание длительности требований в очереди " + decimalFormat.format(system.getQueueTimeExpectedValue()));
             System.out.println("-----------------------------------------");
+        }
+    }
+
+    public void displayResultsTable(List<QueuingSystem> systems) {
+        String pattern = "##0.000";
+        DecimalFormat decimalFormat = new DecimalFormat(pattern);
+        Formatter formatter  = new Formatter();
+        System.out.println(formatter.format("%46s %15s %15s %15s %15s %15s %15s", "lambda ", "mu ", "P(0)", "q", "u", "b", "w"));
+        for (QueuingSystem system : systems) {
+            formatter = new Formatter();
+            System.out.println(formatter.format("%25s %20s %15s %15s %15s %15s %15s %15s",
+                    system.getType().getText() + (system.getType().equals(Type.COLLECTION) ? " - " + system.getId() : ""),
+                    decimalFormat.format(system.getArrivalRate()),
+                    decimalFormat.format(system.getServiceRate()),
+                    decimalFormat.format(system.getNoRequestsProbability()),
+                    decimalFormat.format(system.getRequestsNumberExpectedValue()),
+                    decimalFormat.format(system.getDurationExpectedValue()),
+                    decimalFormat.format(system.getRequestsInTheQueueExpectedValue()),
+                    decimalFormat.format(system.getQueueTimeExpectedValue())));
         }
     }
 }

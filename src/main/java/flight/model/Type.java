@@ -6,7 +6,9 @@ package flight.model;
  */
 public enum Type {
 
-    COLLECTION("Звено сбора данных"), ANALYSIS("Звено анализа данных"), DATASTORE("Звено хранения данных");
+    COLLECTION("Звено сбора данных"),
+    ANALYSIS("Звено анализа данных"),
+    DATASTORE("Звено хранения данных");
 
     private String text;
 
