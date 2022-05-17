@@ -44,6 +44,22 @@ public class UserInterfaceService {
         }
     }
 
+    /**
+     * Соотношение времени нахождения системы в состоянии восстановления к общему времени работы
+     * <= 0.05
+     */
+    public double failureProbability() {
+        System.out.println("Введите вероятность того, что система находится в состоянии восстановления \n" +
+                "(Соотношение времени нахождения прибора в состоянии восстановления к общему времени работы)");
+        try {
+            double probability = Double.parseDouble(reader.readLine());
+            return probability > 0 && probability < 1 ? probability : failureProbability();
+        }
+        catch (Exception e) {
+            return failureProbability();
+        }
+    }
+
     public List<Double> probabilities() {
         System.out.println("Введите через пробел маршрутные вероятности перехода из источника в каждую систему: \n" +
                 "(Либо введите одно значение, чтобы задать одинаковую вероятность перехода из источника) ");
@@ -58,11 +74,11 @@ public class UserInterfaceService {
         }
     }
 
-    public int incomingIntensity() {
+    public double incomingIntensity() {
         System.out.println("Введите интенсивность потока требований из источника (пакетов в секунду): ");
         try {
             String intensityInfo = reader.readLine();
-            return Integer.parseInt(intensityInfo);
+            return Double.parseDouble(intensityInfo);
         } catch (Exception e) {
             return incomingIntensity();
         }
@@ -74,7 +90,7 @@ public class UserInterfaceService {
 
     public boolean isTableView() {
         try {
-            System.out.println("Представить резульататы в виде списка или в виде таблицы? ");
+            System.out.println("Представить результататы в виде списка или в виде таблицы? ");
             String answer = reader.readLine();
             return answer.startsWith("t") || answer.startsWith("т");
         } catch (IOException e) {
@@ -83,15 +99,16 @@ public class UserInterfaceService {
         return false;
     }
 
-    public void displayResultsList(List<QueuingSystem> systems) {
+    public void displayResultsList(QueuingNetwork queuingNetwork) {
         String pattern = "##0.000";
         DecimalFormat decimalFormat = new DecimalFormat(pattern);
         System.out.println("\n\n" + "Характеристики системы: " + "\n");
-        for (QueuingSystem system : systems) {
+        for (QueuingSystem system : queuingNetwork.getSystems()) {
             System.out.println("-----------------------------------------");
             System.out.println(system.getType().getText() + (system.getType().equals(Type.COLLECTION) ? " - " + system.getId() : ""));
             System.out.println("Интенсивность поступления требований " + decimalFormat.format(system.getArrivalRate()));
             System.out.println("Интенсивность обслуживания требований " + decimalFormat.format(system.getServiceRate()));
+            System.out.println("Вероятность отказа " + decimalFormat.format(system.getFailureProbability()));
             System.out.println("Вероятность отсутствия требований " + decimalFormat.format(system.getNoRequestsProbability()));
             System.out.println("Мат. ожидание числа требований " + decimalFormat.format(system.getRequestsNumberExpectedValue()));
             System.out.println("Мат. ожидание длительности пребывания требований " + decimalFormat.format(system.getDurationExpectedValue()));
@@ -101,22 +118,32 @@ public class UserInterfaceService {
         }
     }
 
-    public void displayResultsTable(List<QueuingSystem> systems) {
+    public void displayResultsTable(QueuingNetwork queuingNetwork) {
         String pattern = "##0.000";
         DecimalFormat decimalFormat = new DecimalFormat(pattern);
-        Formatter formatter  = new Formatter();
-        System.out.println(formatter.format("%46s %15s %15s %15s %15s %15s %15s", "lambda ", "mu ", "P(0)", "q", "u", "b", "w"));
-        for (QueuingSystem system : systems) {
-            formatter = new Formatter();
-            System.out.println(formatter.format("%25s %20s %15s %15s %15s %15s %15s %15s",
+        System.out.println(new Formatter().format("%46s %15s %15s %15s %15s %15s %15s %15s", "lambda ", "mu ", "P(f)", "P(0)", "q", "u", "b", "w"));
+        for (QueuingSystem system : queuingNetwork.getSystems()) {
+            System.out.println(new Formatter().format("%25s %20s %15s %15s %15s %15s %15s %15s %15s",
                     system.getType().getText() + (system.getType().equals(Type.COLLECTION) ? " - " + system.getId() : ""),
                     decimalFormat.format(system.getArrivalRate()),
                     decimalFormat.format(system.getServiceRate()),
+                    decimalFormat.format(system.getFailureProbability()),
                     decimalFormat.format(system.getNoRequestsProbability()),
                     decimalFormat.format(system.getRequestsNumberExpectedValue()),
                     decimalFormat.format(system.getDurationExpectedValue()),
                     decimalFormat.format(system.getRequestsInTheQueueExpectedValue()),
                     decimalFormat.format(system.getQueueTimeExpectedValue())));
         }
+        System.out.println("\n");
+        System.out.println(new Formatter().format("%25s %20s %15s %15s %15s %15s %15s %15s %15s",
+                "Общие характеристики сети",
+                decimalFormat.format(queuingNetwork.getArrivalRate()),
+                "",
+                decimalFormat.format(queuingNetwork.getFailureProbability()),
+                "",
+                decimalFormat.format(queuingNetwork.getRequestsNumberExpectedValue()),
+                decimalFormat.format(queuingNetwork.getDurationExpectedValue()),
+                "",
+                ""));
     }
 }

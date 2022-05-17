@@ -9,15 +9,11 @@ import java.util.Map;
  */
 public class Source {
 
-    private int incomingIntensity;
+    private double arrivalRate;
     private Map<QueuingSystem, Double> routeProbabilities;
 
-    public Source() {
-        routeProbabilities = new HashMap<>();
-    }
-
-    public Source(int incomingIntensity, Map<QueuingSystem, Double> routeProbabilities) {
-        this.incomingIntensity = incomingIntensity;
+    public Source(double arrivalRate, Map<QueuingSystem, Double> routeProbabilities) {
+        this.arrivalRate = arrivalRate;
         this.routeProbabilities = routeProbabilities;
     }
 
@@ -29,11 +25,11 @@ public class Source {
         this.routeProbabilities = routeProbabilities;
     }
 
-    public int getIncomingIntensity() {
-        return incomingIntensity;
+    public double getArrivalRate() {
+        return arrivalRate;
     }
 
-    public void setIncomingIntensity(int incomingIntensity) {
-        this.incomingIntensity = incomingIntensity;
+    public void setArrivalRate(int arrivalRate) {
+        this.arrivalRate = arrivalRate;
     }
 }

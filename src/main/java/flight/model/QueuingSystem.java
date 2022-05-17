@@ -10,6 +10,7 @@ public class QueuingSystem {
     private Type type; // к какому звену относится СМО
     private double arrivalRate; // Интенсивность потока требований
     private double serviceRate; // Интенсивность обслуживания требований
+    private double failureProbability; // Вероятность сбоя
     private double returnProbability;
     private double forwardProbability;
     private double noRequestsProbability; // Вероятность отсутствия требований
@@ -18,17 +19,19 @@ public class QueuingSystem {
     private double requestsInTheQueueExpectedValue; // Мат. ожидание числа требований в очереди
     private double queueTimeExpectedValue; // Мат. ожидание длительности требований в очереди
 
-    public QueuingSystem(long id, Type type, double serviceRate, double returnProbability, double forwardProbability) {
+    public QueuingSystem(long id, Type type, double serviceRate, double failureProbability, double returnProbability, double forwardProbability) {
         this.id = id;
         this.type = type;
         this.serviceRate = serviceRate;
+        this.failureProbability = failureProbability;
         this.returnProbability = returnProbability;
         this.forwardProbability = forwardProbability;
     }
 
-    public QueuingSystem(Type type, double serviceRate, double returnProbability, double forwardProbability) {
+    public QueuingSystem(Type type, double serviceRate,  double failureProbability, double returnProbability, double forwardProbability) {
         this.type = type;
         this.serviceRate = serviceRate;
+        this.failureProbability = failureProbability;
         this.returnProbability = returnProbability;
         this.forwardProbability = forwardProbability;
     }
@@ -119,5 +122,13 @@ public class QueuingSystem {
 
     public void setQueueTimeExpectedValue(double queueTimeExpectedValue) {
         this.queueTimeExpectedValue = queueTimeExpectedValue;
+    }
+
+    public double getFailureProbability() {
+        return failureProbability;
+    }
+
+    public void setFailureProbability(double failureProbability) {
+        this.failureProbability = failureProbability;
     }
 }
