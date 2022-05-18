@@ -4,9 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Formatter;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -60,17 +58,20 @@ public class UserInterfaceService {
         }
     }
 
-    public List<Double> probabilities() {
+    public List<Double> probabilities(int collectionSystemsCount) {
         System.out.println("Введите через пробел маршрутные вероятности перехода из источника в каждую систему: \n" +
                 "(Либо введите одно значение, чтобы задать одинаковую вероятность перехода из источника) ");
         try {
             String probabilitiesInfo = reader.readLine();
+            if (probabilitiesInfo.equals("="))
+                return Collections.singletonList((double) 1 / collectionSystemsCount);
+
             return Arrays.stream(probabilitiesInfo.split(" "))
                     .map(Double::parseDouble).collect(Collectors.toList());
         }
         catch (Exception e) {
             System.out.println("Проверьте корректность введенных данных! ");
-            return probabilities();
+            return probabilities(collectionSystemsCount);
         }
     }
 

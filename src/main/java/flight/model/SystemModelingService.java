@@ -42,7 +42,7 @@ public class SystemModelingService {
 
     private void createSource() {
         Source source = new Source(userInterfaceService.incomingIntensity(),
-                createRouteProbabilitiesMap(userInterfaceService.probabilities()));
+                createRouteProbabilitiesMap(userInterfaceService.probabilities(queuingNetwork.getCollectionSystems().size())));
         queuingNetwork.setSource(source);
         queuingNetwork.setArrivalRate(source.getArrivalRate());
     }
