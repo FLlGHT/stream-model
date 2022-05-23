@@ -1,6 +1,7 @@
 package flight.model;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * @author FLIGHT
@@ -21,15 +22,19 @@ public class SystemModelingService {
     }
 
     private void createModel() {
-        createSystems(userInterfaceService.collectionSystems(), userInterfaceService.serviceRateList(), userInterfaceService.failureProbability());
+        createSystems(userInterfaceService.collectionSystems(),
+                userInterfaceService.serviceRateList(),
+                userInterfaceService.failureProbability());
         createSource();
     }
 
     private void createSystems(int collectionSystemsCount, List<Integer> serviceRateList, double failureProbability) {
         List<QueuingSystem> collectionSystems = new ArrayList<>();
-        for (int i = 1; i <= collectionSystemsCount; i++) {
-            collectionSystems.add(new QueuingSystem(i, Type.COLLECTION, serviceRateList.get(0), failureProbability,  0.9, 0.1));
-        }
+//        for (int i = 1; i <= collectionSystemsCount; i++) {
+//            collectionSystems.add(new QueuingSystem(i, Type.COLLECTION, serviceRateList.get(0), failureProbability,  0.9, 0.1));
+//        }
+
+        IntStream.range(1, collectionSystemsCount + 1).forEach(index -> collectionSystems.add(new QueuingSystem(index, Type.COLLECTION, serviceRateList.get(0), failureProbability, 0.9, 0.1)));
 
         QueuingSystem analysisSystem = new QueuingSystem(Type.ANALYSIS, serviceRateList.size() > 1 ? serviceRateList.get(1) : serviceRateList.get(0), failureProbability, 0, 1);
         QueuingSystem dataStoreSystem = new QueuingSystem(Type.DATASTORE, serviceRateList.size() > 2 ? serviceRateList.get(2) : serviceRateList.get(0), failureProbability, 0, 1);
@@ -43,6 +48,7 @@ public class SystemModelingService {
     private void createSource() {
         Source source = new Source(userInterfaceService.incomingIntensity(),
                 createRouteProbabilitiesMap(userInterfaceService.probabilities(queuingNetwork.getCollectionSystems().size())));
+
         queuingNetwork.setSource(source);
         queuingNetwork.setArrivalRate(source.getArrivalRate());
     }
@@ -83,10 +89,15 @@ public class SystemModelingService {
     }
 
     private void computeAnalysisAndDataIncomingIntensity() {
-        double intensity = 0.00;
-        for (QueuingSystem collectionSystem : queuingNetwork.getCollectionSystems()) {
-            intensity += collectionSystem.getArrivalRate() * collectionSystem.getForwardProbability();
-        }
+//        double intensity = 0.00;
+//        for (QueuingSystem collectionSystem : queuingNetwork.getCollectionSystems()) {
+//            intensity += collectionSystem.getArrivalRate() * collectionSystem.getForwardProbability();
+//        }
+
+        double intensity = queuingNetwork.getCollectionSystems().stream()
+                .map(s -> s.getArrivalRate() * s.getForwardProbability())
+                .mapToDouble(x -> x).sum();
+
         QueuingSystem analysisSystem = queuingNetwork.getAnalysisSystem();
         QueuingSystem dataStoreSystem = queuingNetwork.getDataStoreSystem();
 
@@ -95,13 +106,11 @@ public class SystemModelingService {
     }
 
     private boolean stationaryModeExists() {
-        for (QueuingSystem system : queuingNetwork.getSystems()) {
-            if (system.getArrivalRate() > system.getServiceRate()) {
+        boolean stationaryModeExists = queuingNetwork.getSystems().stream().allMatch(system -> system.getArrivalRate() <= system.getServiceRate());
+        if (!stationaryModeExists)
                 userInterfaceService.stationaryModeAlert();
-                return false;
-            }
-        }
-        return true;
+
+        return stationaryModeExists;
     }
 
     private void computeQueuingSystems() {
