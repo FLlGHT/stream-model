@@ -92,8 +92,8 @@ public class UserInterfaceService {
     public boolean isTableView() {
         try {
             System.out.println("Представить результататы в виде списка или в виде таблицы? ");
-            String answer = reader.readLine();
-            return answer.startsWith("t") || answer.startsWith("т");
+            String answer = reader.readLine().toLowerCase();
+            return answer.contains("таб") || answer.startsWith("t") || answer.startsWith("т");
         } catch (IOException e) {
             isTableView();
         }

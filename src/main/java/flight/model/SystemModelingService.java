@@ -160,7 +160,7 @@ public class SystemModelingService {
         double collectionAverageExpectedValue = queuingNetwork.getCollectionSystems()
                 .stream()
                 .mapToDouble(QueuingSystem::getRequestsNumberExpectedValue)
-                .average().orElse(Double.NaN);
+                .sum();
         queuingNetwork.setRequestsNumberExpectedValue(collectionAverageExpectedValue +
                 analysisSystem.getRequestsNumberExpectedValue() + dataStoreSystem.getRequestsNumberExpectedValue());
     }
