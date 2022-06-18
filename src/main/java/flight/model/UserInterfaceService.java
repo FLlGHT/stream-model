@@ -122,9 +122,9 @@ public class UserInterfaceService {
     public void displayResultsTable(QueuingNetwork queuingNetwork) {
         String pattern = "##0.000";
         DecimalFormat decimalFormat = new DecimalFormat(pattern);
-        System.out.println(new Formatter().format("%46s %15s %15s %15s %15s %15s %15s %15s", "lambda ", "mu ", "P(f)", "P(0)", "q", "u", "b", "w"));
+        System.out.println(ConsoleColors.BLUE + new Formatter().format("%43s %6s %9s %8s %6s %8s %8s %8s", "lambda ", "mu ", "P(f)", "P(0)", "q", "u", "b", "w") + ConsoleColors.RESET);
         for (QueuingSystem system : queuingNetwork.getSystems()) {
-            System.out.println(new Formatter().format("%25s %20s %15s %15s %15s %15s %15s %15s %15s",
+            System.out.println(new Formatter().format("%26s %15s %8s %8s %8s %8s %8s %8s %8s",
                     system.getType().getText() + (system.getType().equals(Type.COLLECTION) ? " - " + system.getId() : ""),
                     decimalFormat.format(system.getArrivalRate()),
                     decimalFormat.format(system.getServiceRate()),
@@ -136,7 +136,7 @@ public class UserInterfaceService {
                     decimalFormat.format(system.getQueueTimeExpectedValue())));
         }
         System.out.println("\n");
-        System.out.println(new Formatter().format("%25s %20s %15s %15s %15s %15s %15s %15s %15s",
+        System.out.println(new Formatter().format("%26s %15s %8s %8s %8s %8s %8s %8s %8s",
                 "Общие характеристики сети",
                 decimalFormat.format(queuingNetwork.getArrivalRate()),
                 "",
